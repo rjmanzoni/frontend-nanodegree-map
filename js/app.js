@@ -37,8 +37,6 @@ var ViewModel = function(){
 	modelLocations.forEach(function(marker){
 		self.markersList.push(new MarkerViewModel(marker.title, marker.location, marker.visible));
 	});
-
-	//self.markersList = ko.observableArray(modelLocations);
 	
 }
 
