@@ -17,9 +17,9 @@ var ViewModel = function(){
 		//self.markersList.removeAll();
 		//var x = ko.observableArray();
 		self.markersList().forEach(function(marker){
-			if(marker().title.toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
-				marker().title = "none";
-				console.log(marker().title);
+			if(marker.title.toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
+				marker.title = "none";
+				console.log(marker.title);
 			}
 		});
 		//console.log(x);
@@ -28,12 +28,8 @@ var ViewModel = function(){
 		return true;
 	}
 
-	var array = [];
-		modelLocations.forEach(function(marker){
-			array.push(ko.observable(marker));
-		});
 
-	self.markersList = ko.observableArray(array);
+	self.markersList = ko.observableArray(modelLocations);
 	
 }
 
