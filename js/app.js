@@ -8,28 +8,37 @@ var modelLocations = [
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
 
+var MarkerViewModel = function(title, location, visible){
+	var self = this;
+	self.title = ko.observable(title);
+	self.location = ko.observable(location);
+	self.visible = ko.observable(visible);
+}
+
 var ViewModel = function(){
 	self = this;
 
 	this.filter = ko.observable();
 
 	this.filterList = function(data, event){
-		//self.markersList.removeAll();
-		//var x = ko.observableArray();
 		self.markersList().forEach(function(marker){
-			if(marker.title.toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
-				marker.title = "none";
-				console.log(marker.title);
+			if(marker.title().toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
+				marker.visible("block");
+			}
+			else{
+				marker.visible("none");
 			}
 		});
-		//console.log(x);
-		//self.markersList = x;
-		//self.markersList()[0].title = 'asdas';
+		
 		return true;
 	}
 
+	self.markersList = ko.observableArray();
+	modelLocations.forEach(function(marker){
+		self.markersList.push(new MarkerViewModel(marker.title, marker.location, marker.visible));
+	});
 
-	self.markersList = ko.observableArray(modelLocations);
+	//self.markersList = ko.observableArray(modelLocations);
 	
 }
 
