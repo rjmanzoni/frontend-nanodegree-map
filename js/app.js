@@ -11,12 +11,21 @@ var modelLocations = [
 var ViewModel = function(){
 	self = this;
 
-	this.markersList = ko.observableArray([]);
+	this.filter = ko.observable();
 
-	modelLocations.forEach(function(marker){
-		self.markersList.push(marker);
-	});
+	this.filterList = function(data, event){
+		console.log(data.filter());
+		return true;
+	}
+
+	//this.markersList = ko.observableArray([]);
+	self.markersList = modelLocations;
+	//modelLocations.forEach(function(marker){
+	//	self.markersList.push(marker);
+	//});
+	
 }
+
 
 ko.applyBindings(new ViewModel());
 

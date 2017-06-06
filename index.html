@@ -33,13 +33,14 @@ API Course, Lesson 1 -->
  </head>
  <body>
  	<div class="main">
- 		<input style="width:100%;" type="" name="" placeholder="Digite o Local">
+ 		<input style="width:100%;" type="text" name="" placeholder="Digite o Local" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
  		<ul class="list" data-bind="foreach: markersList">
  			<li data-bind="text: title"></li>
 		</ul>
  	</div>
  	<div id="map"></div>
    
+   <script type='text/javascript' src='js/lib/jquery-3.2.1.min.js'></script>
    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap"></script>
     <script type="text/javascript" src="js/app.js"></script>
