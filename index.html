@@ -4,23 +4,44 @@ API Course, Lesson 1 -->
  <head>
  <!-- styles put here, but you can include a CSS file and reference it instead! -->
    <style type="text/css">
-     html, body { height: 100%; margin: 0; padding: 0; }
-     #map { height: 100%; }
+     body { 
+     	box-sizing: border-box;
+     	display: flex;
+     	margin-right: 1%; 
+     	margin-left: 1%; 
+        padding: 0;
+     }
+     #map { 
+     	height: 100%; 
+     	width: 75%;
+     }
+     .main{
+     	height: 100%; 
+     	width: 25%;
+     	margin-right: 1%; 
+     }
+     .list{
+		display: block;
+ 		list-style-type: none;
+ 		padding: 0;
+
+     }
+     .list li{
+		padding: 1%;
+     }
    </style>
  </head>
  <body>
-   <div id="map"></div>
-   <script>
-    
-      var map;
-     function initMap() {
-       map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 13
-        });
-     }
-   </script>
-   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap"
-    ></script>
+ 	<div class="main">
+ 		<input style="width:100%;" type="" name="" placeholder="Digite o Local">
+ 		<ul class="list" data-bind="foreach: markersList">
+ 			<li data-bind="text: title"></li>
+		</ul>
+ 	</div>
+ 	<div id="map"></div>
+   
+   <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+   <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap"></script>
+    <script type="text/javascript" src="js/app.js"></script>
  </body>
 </html>
