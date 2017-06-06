@@ -14,18 +14,22 @@ var ViewModel = function(){
 	this.filter = ko.observable();
 
 	this.filterList = function(data, event){
-		console.log(data.filter());
+		//self.markersList.removeAll();
+		var x = ko.observableArray();
+		modelLocations.forEach(function(marker){
+			if(marker.title.toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
+				//console.log(marker.title);
+				x.push(marker.title);
+			}
+		});
+		console.log(x);
+		self.markersList = x;
 		return true;
 	}
 
-	//this.markersList = ko.observableArray([]);
-	self.markersList = modelLocations;
-	//modelLocations.forEach(function(marker){
-	//	self.markersList.push(marker);
-	//});
+	self.markersList = ko.observableArray(modelLocations);
 	
 }
-
 
 ko.applyBindings(new ViewModel());
 
