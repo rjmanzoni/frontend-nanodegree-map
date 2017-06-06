@@ -35,7 +35,7 @@ API Course, Lesson 1 -->
  	<div class="main">
  		<input style="width:100%;" type="text" name="" placeholder="Digite o Local" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
  		<ul class="list" data-bind="foreach: markersList">
- 			<li data-bind="text: title"></li>
+ 			<li data-bind="text: title, style:{display: visible}"></li>
 		</ul>
  	</div>
  	<div id="map"></div>
