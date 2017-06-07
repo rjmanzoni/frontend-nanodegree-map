@@ -40,11 +40,27 @@ var modelLocations = [
 
 var markers = [];
 
-var MarkerViewModel = function(title, location, visible){
+var MarkerViewModel = function(title, location, visible, index){
 	var self = this;
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
+	self.index = index;
+	self.show = function(){
+		if(markers[self.index].getAnimation() == google.maps.Animation.BOUNCE){
+			markers[self.index].setAnimation(null);
+		}
+		markers.forEach(function(marker){
+			marker.setAnimation(null);
+		});
+		
+		if(markers[self.index].getAnimation() == null){
+			markers[self.index].setAnimation(google.maps.Animation.BOUNCE);
+		}
+		else{
+			markers[self.index].setAnimation(null);
+		}
+	}
 }
 
 var ViewModel = function(){
@@ -65,15 +81,13 @@ var ViewModel = function(){
 			}
 		}
 
-
-
 		return true;
 	}
 
-	self.markersList = ko.observableArray();
-	modelLocations.forEach(function(marker){
-		self.markersList.push(new MarkerViewModel(marker.title, marker.location, marker.visible));
-	});
+	this.markersList = ko.observableArray();
+	for (var i = 0; i < modelLocations.length; i++) {
+		self.markersList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, i));
+	}
 
 }
 
