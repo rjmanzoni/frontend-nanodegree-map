@@ -23,8 +23,7 @@ function initMap() {
         });
 
 		marker.addListener('click', animate(marker));
-		var infoWindow = new google.maps.InfoWindow();
-		marker.addListener('click', infoWindowShow(marker, infoWindow));
+		marker.addListener('click', infoWindowShow(marker));
 
         markers.push(marker);
         markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindowShow));
@@ -50,15 +49,15 @@ var modelLocations = [
 
 var markers = [];
 
-var MarkerViewModel = function(title, location, visible, marker, infoWindow){
+var MarkerViewModel = function(title, location, visible, marker){
 	var self = this;
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
 	self.marker = ko.observable(marker);
 	//self.infoWindow = infoWindow;
-	console.log(infoWindow);
-	self.infoWindowShow = infoWindowShow(marker, infoWindow);
+	//console.log(infoWindow);
+	self.infoWindowShow = infoWindowShow(marker);
 	self.show = animate(marker);
 }
 
@@ -76,9 +75,9 @@ var animate = function(clickedMarker){
 	}
 }
 
-var infoWindowShow = function(clickedMarker, infoWindow){
+var infoWindowShow = function(clickedMarker){
 	return function(){
-		//var infoWindow = new google.maps.InfoWindow();
+		var infoWindow = new google.maps.InfoWindow();
 		//console.log(infoWindow);
           infoWindow.marker = clickedMarker;
           infoWindow.setContent('<div>' + clickedMarker.title + '</div>');
