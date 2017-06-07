@@ -23,10 +23,11 @@ function initMap() {
         });
 
 		marker.addListener('click', animate(marker));
-		marker.addListener('click', infoWindowShow(marker));
+		var infoWindow = new google.maps.InfoWindow();
+		marker.addListener('click', infoWindowShow(marker, infoWindow));
 
         markers.push(marker);
-        markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker));
+        markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindowShow));
 
          // marker.addListener('click', function() {
           //  populateInfoWindow(this, largeInfowindow);
@@ -49,13 +50,15 @@ var modelLocations = [
 
 var markers = [];
 
-var MarkerViewModel = function(title, location, visible, marker){
+var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	var self = this;
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
 	self.marker = ko.observable(marker);
-	self.infoWindowShow = infoWindowShow(marker);
+	//self.infoWindow = infoWindow;
+	console.log(infoWindow);
+	self.infoWindowShow = infoWindowShow(marker, infoWindow);
 	self.show = animate(marker);
 }
 
@@ -66,17 +69,17 @@ var animate = function(clickedMarker){
 			}
 			else{
 				markers.forEach(function(marker){
-				marker.setAnimation(null);
+					marker.setAnimation(null);
 			});
 			clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
 		}
 	}
 }
 
-var infoWindowShow = function(clickedMarker){
+var infoWindowShow = function(clickedMarker, infoWindow){
 	return function(){
-		var infoWindow = new google.maps.InfoWindow();
-		console.log(infoWindow);
+		//var infoWindow = new google.maps.InfoWindow();
+		//console.log(infoWindow);
           infoWindow.marker = clickedMarker;
           infoWindow.setContent('<div>' + clickedMarker.title + '</div>');
           infoWindow.open(map, clickedMarker);
