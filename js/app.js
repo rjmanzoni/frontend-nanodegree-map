@@ -17,17 +17,7 @@ function initMap() {
             id: i
           });
 
-					marker.addListener('click', function(){
-						if(this.getAnimation() == google.maps.Animation.BOUNCE){
-						this.setAnimation(null);
-						}
-						else{
-							markers.forEach(function(marker){
-								marker.setAnimation(null);
-							});
-							this.setAnimation(google.maps.Animation.BOUNCE);
-						}
-					});
+					marker.addListener('click', animate(marker));
 
           markers.push(marker);
 
@@ -71,8 +61,18 @@ var MarkerViewModel = function(title, location, visible, index){
 	}
 }
 
-var show = function(){
-
+var animate = function(clickedMarker){
+	return function(){
+		if(clickedMarker.getAnimation() == google.maps.Animation.BOUNCE){
+		clickedMarker.setAnimation(null);
+		}
+		else{
+			markers.forEach(function(marker){
+				marker.setAnimation(null);
+			});
+			clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+		}
+	}
 }
 
 var ViewModel = function(){
