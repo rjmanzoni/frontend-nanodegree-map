@@ -112,7 +112,7 @@ var ViewModel = function(markersViewModelList){
 	}
 	this.markersList = markersViewModelList;
 	//for (var i = 0; i < modelLocations.length; i++) {
-	//	self.markersList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, i));
+	//self.markersList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, i));
 	//}
 
 }
