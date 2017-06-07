@@ -17,6 +17,18 @@ function initMap() {
             id: i
           });
 
+					marker.addListener('click', function(){
+						if(this.getAnimation() == google.maps.Animation.BOUNCE){
+						this.setAnimation(null);
+						}
+						else{
+							markers.forEach(function(marker){
+								marker.setAnimation(null);
+							});
+							this.setAnimation(google.maps.Animation.BOUNCE);
+						}
+					});
+
           markers.push(marker);
 
          // marker.addListener('click', function() {
@@ -50,17 +62,17 @@ var MarkerViewModel = function(title, location, visible, index){
 		if(markers[self.index].getAnimation() == google.maps.Animation.BOUNCE){
 			markers[self.index].setAnimation(null);
 		}
-		markers.forEach(function(marker){
-			marker.setAnimation(null);
-		});
-		
-		if(markers[self.index].getAnimation() == null){
+		else{
+			markers.forEach(function(marker){
+				marker.setAnimation(null);
+			});
 			markers[self.index].setAnimation(google.maps.Animation.BOUNCE);
 		}
-		else{
-			markers[self.index].setAnimation(null);
-		}
 	}
+}
+
+var show = function(){
+
 }
 
 var ViewModel = function(){
