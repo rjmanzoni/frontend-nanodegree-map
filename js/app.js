@@ -11,8 +11,6 @@ function initMap() {
       zoom: 16
     });
 
-    
-
    for (var i = 0; i < modelLocations.length; i++) {
         var position = modelLocations[i].location;
         var title = modelLocations[i].title;
@@ -47,7 +45,6 @@ var modelLocations = [
 	{title: 'Praca Roosevelt', location: {lat: -23.547808, lng: -46.646737}, visible:"true"},
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
-
 
 var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	var self = this;
@@ -98,4 +95,33 @@ var ViewModel = function(markersViewModelList){
 	}
 	this.markersList = markersViewModelList;
 }
+
 ko.applyBindings(new ViewModel(markersViewModelList));
+
+var WikiRestService = function(url){
+	this.url = url;
+}
+
+WikiRestService.prototype.invoke = function(content, callback) {
+
+	$.ajax( {
+      url: this.url.replace('$value', content),
+      dataType: 'jsonp',
+      success: function(response) {
+         callback(response);
+      }
+    }
+  );
+}
+
+var wikiRestService = new WikiRestService('https://en.wikipedia.org/w/api.php?action=opensearch&search=$value&format=json&callback=wikiCallback');
+
+var test = function(value){
+	for(var i = 0 ; i < value.length; i++){
+		console.log(value[i]);
+	}
+	
+}
+
+wikiRestService.invoke('Famiglia Mancini', test);
+
