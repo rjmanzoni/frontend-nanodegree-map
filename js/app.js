@@ -1,9 +1,30 @@
+var WikiRestService = function(url){
+	this.url = url;
+}
+
+WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackError) {
+	$.ajax( {
+      url: this.url.replace('$value', content),
+      dataType: 'jsonp',
+      timeout: 5000,
+      success: function(response) {
+         callbackSuccess(response);
+      },
+      error: function(xhr, ajaxOptions, thrownError){
+      	 callBackError(xhr, ajaxOptions, thrownError);
+      }
+    }
+  );
+}
+
 var map;
 
 var markersViewModelList = ko.observableArray([]);
 
 var currentInfoWindow = null;
 var currentMarker = null
+
+var wikiRestService = new WikiRestService('https://en.wikipedia.org/w/api.php?action=opensearch&search=$value&format=json&callback=wikiCallback');
 
 function initMap() {
    map = new google.maps.Map(document.getElementById('map'), {
@@ -54,6 +75,7 @@ var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	self.marker = marker;
 	self.infoWindow = infoWindow;
 	self.show = animate(marker, infoWindow);
+	self.wikiList = ko.observableArray([]);
 }
 
 var animate = function(clickedMarker, infoWindow){
@@ -76,11 +98,13 @@ var animate = function(clickedMarker, infoWindow){
 		}
 }
 
+
 var ViewModel = function(markersViewModelList){
 	self = this;
 
 	this.filter = ko.observable();
-	this.current = null;
+
+	//this.currentClickedMarker = markersViewModelList[0];
 
 	this.filterList = function(data, event){
 
@@ -101,29 +125,12 @@ var ViewModel = function(markersViewModelList){
 	this.markersList = markersViewModelList;
 }
 
+var WikiView = function(){
+	this.wikiList = ko.observable();
+}
+
 ko.applyBindings(new ViewModel(markersViewModelList));
-
-var WikiRestService = function(url){
-	this.url = url;
-}
-
-WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackError) {
-
-	$.ajax( {
-      url: this.url.replace('$value', content),
-      dataType: 'jsonp',
-      timeout: 5000,
-      success: function(response) {
-         callbackSuccess(response);
-      },
-      error: function(xhr, ajaxOptions, thrownError){
-      	 callBackError(xhr, ajaxOptions, thrownError);
-      }
-    }
-  );
-}
-
-var wikiRestService = new WikiRestService('https://en.wikipedia.org/w/api.php?action=opensearch&search=$value&format=json&callback=wikiCallback');
+ko.applyBindings(new WikiView());
 
 var test = function(value){
 	for(var i = 0 ; i < value.length; i++){
