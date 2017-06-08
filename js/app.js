@@ -2,6 +2,9 @@ var map;
 
 var markersViewModelList = ko.observableArray([]);
 
+var currentInfoWindow = null;
+var currentMarker = null
+
 function initMap() {
    map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: -23.5477279, lng: -46.6436846},
@@ -22,18 +25,16 @@ function initMap() {
             id: i
         });
 
-		marker.addListener('click', animate(marker));
-		marker.addListener('click', infoWindowShow(marker));
+        var infoWindow = new google.maps.InfoWindow();
+        currentInfoWindow = infoWindow;
+        currentMarker = marker;
 
-        markers.push(marker);
-        markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindowShow));
+        infoWindow.setContent('<div>' + marker.title + '</div>');
 
-         // marker.addListener('click', function() {
-          //  populateInfoWindow(this, largeInfowindow);
-          //});
-         // bounds.extend(markers[i].position);
+		marker.addListener('click', animate(marker, infoWindow));
 
-       // map.fitBounds(bounds);
+        markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindow));
+         
       }
 }
 
@@ -47,74 +48,54 @@ var modelLocations = [
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
 
-var markers = [];
 
-var MarkerViewModel = function(title, location, visible, marker){
+var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	var self = this;
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
-	self.marker = ko.observable(marker);
-	//self.infoWindow = infoWindow;
-	//console.log(infoWindow);
-	self.infoWindowShow = infoWindowShow(marker);
-	self.show = animate(marker);
+	self.marker = marker;
+	self.infoWindow = infoWindow;
+	self.show = animate(marker, infoWindow);
 }
 
-var animate = function(clickedMarker){
+var animate = function(clickedMarker, infoWindow){
 	return function(){
-			if(clickedMarker.getAnimation() == google.maps.Animation.BOUNCE){
-				clickedMarker.setAnimation(null);
+			if(currentMarker != clickedMarker){
+				currentMarker.setAnimation(null);
+				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+				currentMarker = clickedMarker;
+			}else{
+				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
 			}
-			else{
-				markers.forEach(function(marker){
-					marker.setAnimation(null);
-			});
-			clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+			currentInfoWindow.close();
+			infoWindow.open(map, clickedMarker);
+			currentInfoWindow = infoWindow;
 		}
-	}
-}
-
-var infoWindowShow = function(clickedMarker){
-	return function(){
-		var infoWindow = new google.maps.InfoWindow();
-		//console.log(infoWindow);
-          infoWindow.marker = clickedMarker;
-          infoWindow.setContent('<div>' + clickedMarker.title + '</div>');
-          infoWindow.open(map, clickedMarker);
-          // Make sure the marker property is cleared if the infowindow is closed.
-          infoWindow.addListener('closeclick',function(){
-           		infoWindow.setMarker = null;
-          	}
-          );
-	}
 }
 
 var ViewModel = function(markersViewModelList){
 	self = this;
 
 	this.filter = ko.observable();
+	this.current = null;
 
 	this.filterList = function(data, event){
 
 		for (var i = 0; i < self.markersList().length; i++) {
 			if(self.markersList()[i].title().toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
 				self.markersList()[i].visible("block");
-				markers[i].setMap(map);
+				self.markersList()[i].marker.setVisible(true);
 			}
 			else{
 				self.markersList()[i].visible("none");
-				markers[i].setMap(null);
+				self.markersList()[i].marker.setVisible(false);
+				self.markersList()[i].infoWindow.close();
 			}
 		}
 
 		return true;
 	}
 	this.markersList = markersViewModelList;
-	//for (var i = 0; i < modelLocations.length; i++) {
-	//self.markersList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, i));
-	//}
-
 }
-
 ko.applyBindings(new ViewModel(markersViewModelList));
