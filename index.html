@@ -33,14 +33,18 @@ API Course, Lesson 1 -->
  </head>
  <body>
  	<div class="main">
- 		<div>
+ 		<div style="height:30%;">
 	 		<input style="width:100%;" type="text" name="" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
 	 		<ul class="list" data-bind="foreach: markersList">
 	 			<li data-bind="text: title, style:{display: visible}, click: show"></li>
 			</ul>
 		</div>
-		<div>
-			
+		<hr>
+		<div style="height:70%;">
+			<h3 style="text-align:center">Resultados do Wikipedia</h3>
+			<ul class="list" data-bind="foreach: wikiList">
+	 			<li data-bind="text: content"></li>
+			</ul>
 		</div>
  	</div>
  	<div id="map"></div>
@@ -48,6 +52,6 @@ API Course, Lesson 1 -->
    <script type='text/javascript' src='js/lib/jquery-3.2.1.min.js'></script>
    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+   <script type="text/javascript" src="js/app.js"></script>
  </body>
 </html>
