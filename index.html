@@ -33,10 +33,15 @@ API Course, Lesson 1 -->
  </head>
  <body>
  	<div class="main">
- 		<input style="width:100%;" type="text" name="" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
- 		<ul class="list" data-bind="foreach: markersList">
- 			<li data-bind="text: title, style:{display: visible}, click: show"></li>
-		</ul>
+ 		<div>
+	 		<input style="width:100%;" type="text" name="" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
+	 		<ul class="list" data-bind="foreach: markersList">
+	 			<li data-bind="text: title, style:{display: visible}, click: show"></li>
+			</ul>
+		</div>
+		<div>
+			
+		</div>
  	</div>
  	<div id="map"></div>
 

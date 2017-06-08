@@ -63,7 +63,12 @@ var animate = function(clickedMarker, infoWindow){
 				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
 				currentMarker = clickedMarker;
 			}else{
-				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+				if(clickedMarker.getAnimation() == null){
+					clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+				}
+				else{
+					clickedMarker.setAnimation(null);
+				}
 			}
 			currentInfoWindow.close();
 			infoWindow.open(map, clickedMarker);
