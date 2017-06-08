@@ -104,7 +104,8 @@ var ViewModel = function(markersViewModelList){
 
 	this.filter = ko.observable();
 
-	//this.currentClickedMarker = markersViewModelList[0];
+	//console.log(markersViewModelList[0]);
+	this.currentClickedMarker = ko.observable();
 
 	this.filterList = function(data, event){
 
@@ -125,12 +126,7 @@ var ViewModel = function(markersViewModelList){
 	this.markersList = markersViewModelList;
 }
 
-var WikiView = function(){
-	this.wikiList = ko.observable();
-}
-
 ko.applyBindings(new ViewModel(markersViewModelList));
-ko.applyBindings(new WikiView());
 
 var test = function(value){
 	for(var i = 0 ; i < value.length; i++){
