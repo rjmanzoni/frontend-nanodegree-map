@@ -102,13 +102,17 @@ var WikiRestService = function(url){
 	this.url = url;
 }
 
-WikiRestService.prototype.invoke = function(content, callback) {
+WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackError) {
 
 	$.ajax( {
       url: this.url.replace('$value', content),
       dataType: 'jsonp',
+      timeout: 5000,
       success: function(response) {
-         callback(response);
+         callbackSuccess(response);
+      },
+      error: function(xhr, ajaxOptions, thrownError){
+      	 callBackError(xhr, ajaxOptions, thrownError);
       }
     }
   );
@@ -123,5 +127,11 @@ var test = function(value){
 	
 }
 
-wikiRestService.invoke('Famiglia Mancini', test);
+var err = function(a,b,c){
+	console.log(a);
+	console.log(b);
+	console.log(c);
+}
+
+wikiRestService.invoke('Famiglia Mancini', test, err);
 
