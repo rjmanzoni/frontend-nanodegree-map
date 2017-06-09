@@ -36,13 +36,13 @@ API Course, Lesson 1 -->
  		<div style="height:30%;">
 	 		<input style="width:100%;" type="text" name="" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
 	 		<ul class="list" data-bind="foreach: markersList">
-	 			<li data-bind="text: title, style:{display: visible}, click: show"></li>
+	 			<li data-bind="text: title, style:{display: visible}, click: function(){show(), $parent.setCurrent()}"></li>
 			</ul>
 		</div>
 		<hr>
 		<div style="height:70%;">
 			<h3 style="text-align:center">Resultados do Wikipedia</h3>
-			<ul class="list" data-bind="foreach: currentClickedMarker.wikiList">
+			<ul class="list" data-bind="foreach: currentLocation.wikiList">
 	 			<li data-bind="text: content"></li>
 			</ul>
 		</div>

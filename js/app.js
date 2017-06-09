@@ -104,8 +104,11 @@ var ViewModel = function(markersViewModelList){
 
 	this.filter = ko.observable();
 
-	//console.log(markersViewModelList[0]);
-	this.currentClickedMarker = ko.observable();
+	this.currentLocation = ko.observable();
+
+	this.setCurrent = function(location){
+		this.currentLocation = location;
+	}
 
 	this.filterList = function(data, event){
 
