@@ -11,7 +11,7 @@ WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackEr
          callbackSuccess(response);
       },
       error: function(xhr, ajaxOptions, thrownError){
-      	 callBackError(xhr, ajaxOptions, thrownError);
+      	 callBackError();
       }
     }
   );
@@ -20,6 +20,7 @@ WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackEr
 var map;
 
 var markersViewModelList = ko.observableArray([]);
+var markersList = [];
 
 var currentInfoWindow = null;
 var currentMarker = null
@@ -51,13 +52,13 @@ function initMap() {
         infoWindow.setContent('<div>' + marker.title + '</div>');
 
 		marker.addListener('click', animate(marker, infoWindow));
+		markersList.push(marker);
 		//marker.addListener('click', animate(marker, infoWindow));
 
-        markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindow));
+        markersViewModelList.push(new MarkerModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindow));
          
       }
 }
-
 
 var modelLocations = [
 	{title: 'Theatro Municipal (São Paulo)', location: {lat: -23.545235, lng: -46.6386151}, visible:"true"},
@@ -68,7 +69,7 @@ var modelLocations = [
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
 
-var MarkerViewModel = function(title, location, visible, marker, infoWindow){
+var MarkerModel = function(title, location, visible, marker, infoWindow){
 	var self = this;
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
@@ -76,13 +77,18 @@ var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	self.marker = marker;
 	self.infoWindow = infoWindow;
 	self.show = animate(marker, infoWindow);
-	self.wikiList;
+	self.wikiList =  ko.observable();
 
 	self.fill = function(response){
-		self.wikiList = ko.observable(response[2]);
+		self.wikiList(response[2]);
 	}
 
-	wikiRestService.invoke(self.title(), self.fill, err);
+	self.err = function(){
+		self.wikiList('Não foi possível recuperar a infomação do wikipedia!');
+	}
+	
+	wikiRestService.invoke(self.title(), self.fill, self.err);
+	
 }
 
 var animate = function(clickedMarker, infoWindow){
@@ -144,9 +150,6 @@ var test = function(value){
 	value.forEach(function(x){
 		console.log(x);
 	});
-	
-	
-	
 }
 
 var err = function(a,b,c){
