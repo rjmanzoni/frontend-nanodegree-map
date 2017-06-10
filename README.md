@@ -13,6 +13,6 @@
 	
 O sistema de **Mapa da Região e Pontos de Interesse** mostra cinco localizações e seus pontos no mapa. Você pode clicar em um dos elementos da lista localizada à esquerda para descobrir no mapa do *Google* a localização. Ao clicar em algum item da lista ou no mapa também é mostrado informações do *Wikipedia* para conhecer mais sobre o local.
 
-Se desejar, pode digitar a localização, que fica no canto superior esquerdo, para filtar os elementos.
+Se desejar, pode digitar a localização, que fica no canto superior esquerdo, para filtrar os elementos.
   
 Divirta-se ;)
