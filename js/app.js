@@ -19,8 +19,22 @@ WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackEr
 
 var map;
 
-var markersViewModelList = ko.observableArray([]);
+//var markersViewModelList = ko.observableArray([]);
 var markersList = [];
+
+var modelLocations = [
+	{title: 'Theatro Municipal (São Paulo)', location: {lat: -23.545235, lng: -46.6386151}, visible:"true", wikiList: null},
+	{title: 'Praça da República', location: {lat: -23.543392, lng: -46.642537}, visible:"true", wikiList: null},
+	{title: 'Edificio Itália', location: {lat: -23.545415, lng: -46.643553}, visible:"true", wikiList: null},
+	{title: 'Centro Cultural Banco do Brasil', location: {lat: -23.5474917, lng: -46.6346508}, visible:"true", wikiList: null},
+	{title: 'Praca Roosevelt', location: {lat: -23.547808, lng: -46.646737}, visible:"true", wikiList: null},
+	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true", wikiList: null}
+];
+var mapList = {};
+
+modelLocations.forEach(function(value){
+	mapList[value.title] = {marker: null, infoWindow: null};
+});
 
 var currentInfoWindow = null;
 var currentMarker = null
@@ -51,23 +65,15 @@ function initMap() {
 
         infoWindow.setContent('<div>' + marker.title + '</div>');
 
-		marker.addListener('click', animate(marker, infoWindow));
-		markersList.push(marker);
-		//marker.addListener('click', animate(marker, infoWindow));
+		marker.addListener('click', showInfoWindowAndMarker(title));
+		//markersList.push(marker);
 
-        markersViewModelList.push(new MarkerModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindow));
-         
+		mapList[title].marker = marker;
+		mapList[title].infoWindow = infoWindow;
+
       }
 }
 
-var modelLocations = [
-	{title: 'Theatro Municipal (São Paulo)', location: {lat: -23.545235, lng: -46.6386151}, visible:"true"},
-	{title: 'Praça da República', location: {lat: -23.543392, lng: -46.642537}, visible:"true"},
-	{title: 'Edificio Itália', location: {lat: -23.545415, lng: -46.643553}, visible:"true"},
-	{title: 'Centro Cultural Banco do Brasil', location: {lat: -23.5474917, lng: -46.6346508}, visible:"true"},
-	{title: 'Praca Roosevelt', location: {lat: -23.547808, lng: -46.646737}, visible:"true"},
-	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
-];
 
 var MarkerModel = function(title, location, visible, marker, infoWindow){
 	var self = this;
@@ -93,6 +99,7 @@ var MarkerModel = function(title, location, visible, marker, infoWindow){
 
 var animate = function(clickedMarker, infoWindow){
 	return function(){
+		//console.log(clickedMarker);
 			if(currentMarker != clickedMarker){
 				currentMarker.setAnimation(null);
 				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
@@ -111,6 +118,29 @@ var animate = function(clickedMarker, infoWindow){
 		}
 }
 
+var showInfoWindowAndMarker = function(title){
+	return function(){
+		var clickedMarker = mapList[title].marker;
+		var infoWindow = mapList[title].infoWindow;
+		if(currentMarker != clickedMarker){
+				currentMarker.setAnimation(null);
+				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+				currentMarker = clickedMarker;
+			}else{
+				if(clickedMarker.getAnimation() == null){
+					clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+				}
+				else{
+					clickedMarker.setAnimation(null);
+				}
+			}
+			currentInfoWindow.close();
+			infoWindow.open(map, clickedMarker);
+			currentInfoWindow = infoWindow;
+	}
+
+
+}
 
 var ViewModel = function(markersViewModelList){
 	self = this;
@@ -138,13 +168,77 @@ var ViewModel = function(markersViewModelList){
 		return true;
 	}
 
-
 	this.markersList = markersViewModelList;
-
 	this.currentLocation = ko.observable();
 }
 
-ko.applyBindings(new ViewModel(markersViewModelList));
+var MarkerModel2 = function(title, location, visible, index){
+	var self = this;
+	self.title = ko.observable(title);
+	self.location = ko.observable(location);
+	self.visible = ko.observable(visible);
+
+	//self.index = index;
+	self.show = showInfoWindowAndMarker(title);
+
+	self.wikiList =  ko.observable();
+
+	self.fill = function(response){
+		self.wikiList(response[2]);
+	}
+
+	self.err = function(){
+		self.wikiList('Não foi possível recuperar a infomação do wikipedia!');
+	}
+	
+	wikiRestService.invoke(self.title(), self.fill, self.err);
+	
+}
+
+var ViewModel2 = function(modelLocations){
+	self = this;
+
+	this.filter = ko.observable();
+
+	this.markersList = ko.observableArray();
+
+	this.currentLocation = ko.observable();
+
+	this.setCurrent = function(location){
+		self.currentLocation(location.wikiList());
+	}
+
+	for (var i = 0; i < modelLocations.length; i++) {
+		this.markersList.push(new MarkerModel2(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, i));
+
+	}
+
+	this.filterList = function(data, event){
+
+		for (var i = 0; i < self.markersList().length; i++) {
+			if(self.markersList()[i].title().toUpperCase().indexOf(data.filter().toUpperCase()) > -1){
+				self.markersList()[i].visible("block");
+				mapList[self.markersList()[i].title()].marker.setVisible(true);
+				//self.markersList()[i].marker.setVisible(true);
+			}
+			else{
+				self.markersList()[i].visible("none");
+				mapList[self.markersList()[i].title()].marker.setVisible(false);
+				//self.markersList()[i].marker.setVisible(false);
+				mapList[self.markersList()[i].title()].infoWindow.close();
+				//self.markersList()[i].infoWindow.close();
+			}
+		}
+
+		return true;
+	}
+	
+}
+
+//ko.applyBindings(new ViewModel(markersViewModelList));
+
+ko.applyBindings(new ViewModel2(modelLocations));
+
 
 var test = function(value){
 	value.forEach(function(x){
