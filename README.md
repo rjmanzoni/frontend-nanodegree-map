@@ -11,6 +11,6 @@
 
 ### Conhecendo o sistema
 	
-	O sistema de **Mapa da Região e Pontos de Interesse** mostra cinco localizações e seus pontos no mapa. Você pode clicar em um dos elementos da lista localizada à esquerda para descobrir no map o lugar. Ao clicar em alguma localização também é mostrado informações do *Wikipedia* para conhecer mais sobre o local.
+O sistema de **Mapa da Região e Pontos de Interesse** mostra cinco localizações e seus pontos no mapa. Você pode clicar em um dos elementos da lista localizada à esquerda para descobrir no map o lugar. Ao clicar em alguma localização também é mostrado informações do *Wikipedia* para conhecer mais sobre o local.
   
 Divirta-se ;)
