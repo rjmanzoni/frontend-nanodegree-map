@@ -75,7 +75,13 @@ var MarkerViewModel = function(title, location, visible, marker, infoWindow){
 	self.marker = marker;
 	self.infoWindow = infoWindow;
 	self.show = animate(marker, infoWindow);
-	self.wikiList = ko.observableArray([]);
+	self.wikiList;
+
+	self.fill = function(response){
+		self.wikiList = ko.observable(response[2]);
+	}
+
+	wikiRestService.invoke(self.title(), self.fill, err);
 }
 
 var animate = function(clickedMarker, infoWindow){
@@ -104,10 +110,8 @@ var ViewModel = function(markersViewModelList){
 
 	this.filter = ko.observable();
 
-	this.currentLocation = ko.observable();
-
 	this.setCurrent = function(location){
-		this.currentLocation = location;
+		self.currentLocation(location.wikiList());
 	}
 
 	this.filterList = function(data, event){
@@ -126,15 +130,21 @@ var ViewModel = function(markersViewModelList){
 
 		return true;
 	}
+
+
 	this.markersList = markersViewModelList;
+
+	this.currentLocation = ko.observable();
 }
 
 ko.applyBindings(new ViewModel(markersViewModelList));
 
 var test = function(value){
-	for(var i = 0 ; i < value.length; i++){
-		console.log(value[i]);
-	}
+	value.forEach(function(x){
+		console.log(x);
+	});
+	
+	
 	
 }
 
@@ -144,5 +154,5 @@ var err = function(a,b,c){
 	console.log(c);
 }
 
-wikiRestService.invoke('Famiglia Mancini', test, err);
+wikiRestService.invoke('Teatro Municipal de Sao Paulo', test, err);
 
