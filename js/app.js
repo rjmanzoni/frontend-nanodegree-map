@@ -28,7 +28,7 @@ var wikiRestService = new WikiRestService('https://en.wikipedia.org/w/api.php?ac
 
 function initMap() {
    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: -23.5477279, lng: -46.6436846},
+      center: {lat: -23.5479528, lng: -46.6430906},
       zoom: 16
     });
 
@@ -51,18 +51,19 @@ function initMap() {
         infoWindow.setContent('<div>' + marker.title + '</div>');
 
 		marker.addListener('click', animate(marker, infoWindow));
+		//marker.addListener('click', animate(marker, infoWindow));
 
         markersViewModelList.push(new MarkerViewModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible, marker, infoWindow));
          
       }
 }
 
+
 var modelLocations = [
-	{title: 'Teatro Municipal de Sao Paulo', location: {lat: -23.545235, lng: -46.6386151}, visible:"true"},
-	{title: 'Lanchonete Estadao', location: {lat: -23.5487193, lng: -46.642684}, visible:"true"},
-	{title: 'Boate Love Story', location: {lat: -23.5459241, lng: -46.6450752}, visible:"true"},
-	{title: 'Bar JazzB', location: {lat: -23.5448619, lng: -46.6450028}, visible:"true"},
-	{title: 'Familia Mancini', location: {lat: -23.5503697, lng: -46.645088}, visible:"true"},
+	{title: 'Theatro Municipal (São Paulo)', location: {lat: -23.545235, lng: -46.6386151}, visible:"true"},
+	{title: 'Praça da República', location: {lat: -23.543392, lng: -46.642537}, visible:"true"},
+	{title: 'Edificio Itália', location: {lat: -23.545415, lng: -46.643553}, visible:"true"},
+	{title: 'Centro Cultural Banco do Brasil', location: {lat: -23.5474917, lng: -46.6346508}, visible:"true"},
 	{title: 'Praca Roosevelt', location: {lat: -23.547808, lng: -46.646737}, visible:"true"},
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
@@ -154,5 +155,5 @@ var err = function(a,b,c){
 	console.log(c);
 }
 
-wikiRestService.invoke('Teatro Municipal de Sao Paulo', test, err);
+wikiRestService.invoke('Centro Cultural Banco do Brasil', test, err);
 
