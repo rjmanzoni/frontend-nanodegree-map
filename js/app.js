@@ -104,10 +104,10 @@ var showInfoWindowAndMarker = function(title){
 
 var MarkerModel = function(title, location, visible){
 	var self = this;
+
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
-
 	self.show = showInfoWindowAndMarker(title);	
 }
 
@@ -115,23 +115,18 @@ var ViewModel = function(modelLocations){
 	self = this;
 
 	this.filter = ko.observable();
-
 	this.markersList = ko.observableArray();
-
 	this.currentWikiList = ko.observable();
-	
-	this.setCurrent = function(location){
 
+	this.setCurrent = function(location){
 		var wiki = function(response){
         		self.currentWikiList(response[2]);
         	}
-		
 		wikiRestService.invoke(location.title(), wiki, function(){self.currentWikiList(errorMessage)});
 	}
 
 	for (var i = 0; i < modelLocations.length; i++) {
 		this.markersList.push(new MarkerModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible));
-
 	}
 
 	this.filterList = function(data, event){
