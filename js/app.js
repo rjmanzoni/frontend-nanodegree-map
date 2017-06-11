@@ -31,6 +31,8 @@ var modelLocations = [
 	{title: 'Praca Roosevelt', location: {lat: -23.547808, lng: -46.646737}, visible:"true"},
 	{title: 'Edificio Copan', location: {lat: -23.5464774, lng: -46.644516}, visible:"true"}
 ];
+
+//variável que mantem um mapa de marker e infowindow para estabelecer o vinculo com marker/infowindow e as localizacoes
 var mapList = {};
 
 modelLocations.forEach(function(value){
@@ -63,6 +65,8 @@ function initMap() {
 
         infoWindow.setContent('<div>' + marker.title + '</div>');
 
+        //preenche a informacao do WIKI
+        //obs: foi dito para não usar KnockoutJS para eventos da api do google, por isso que fiz uso do jquery para preencher os dados quando o marker e' clicado.
         var wiki = function(response){
         	$('#currentLocation').text(response[2]);
         }
@@ -79,7 +83,7 @@ function initMap() {
       }
 }
 
-
+//funcao que mostra animacao qd e' clicado na lista ou no marker
 var showInfoWindowAndMarker = function(title){
 	return function(){
 		var clickedMarker = mapList[title].marker;
@@ -102,7 +106,7 @@ var showInfoWindowAndMarker = function(title){
 	}
 }
 
-var MarkerModel = function(title, location, visible){
+var LocationModel = function(title, location, visible){
 	var self = this;
 
 	self.title = ko.observable(title);
@@ -118,6 +122,7 @@ var ViewModel = function(modelLocations){
 	this.markersList = ko.observableArray();
 	this.currentWikiList = ko.observable();
 
+	//atualiza wikipedia info qd clicado
 	this.setCurrent = function(location){
 		var wiki = function(response){
         		self.currentWikiList(response[2]);
@@ -126,9 +131,10 @@ var ViewModel = function(modelLocations){
 	}
 
 	for (var i = 0; i < modelLocations.length; i++) {
-		this.markersList.push(new MarkerModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible));
+		this.markersList.push(new LocationModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible));
 	}
 
+	//filtra as localizacoes conforme o usuario digita
 	this.filterList = function(data, event){
 
 		for (var i = 0; i < self.markersList().length; i++) {
