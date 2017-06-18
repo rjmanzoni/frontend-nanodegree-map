@@ -81,8 +81,6 @@ function initMap() {
         	};
         }(infoWindow);
 
-        
-
         wikiRestService.invoke(title, wiki, error);
 
 		marker.addListener('click', showInfoWindowAndMarker(title));
@@ -157,6 +155,10 @@ var ViewModel = function(modelLocations){
 
 	this.toggle = function(){
 		self.isOpen(!this.isOpen());
+	};
+
+	this.close = function(){
+		self.isOpen(false);
 	};
 	
 };

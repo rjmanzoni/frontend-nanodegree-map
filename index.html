@@ -94,17 +94,14 @@
     </a>
   </header>
     <nav data-bind="css : {'open' : isOpen}">
-      <!-- <div style="height:30%;"> -->
         <input style="width:90%;" type="text" name="Filter Location" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
         <ul class="list" data-bind="foreach: markersList">
-          <li data-bind="text: title, style:{display: visible}, click: function(){show(), $parent.toggle()}"></li>
+          <li data-bind="text: title, style:{display: visible}, click: function(){show(), $parent.close()}"></li>
         </ul>
-      <!-- </div> -->
       </nav>
    	<main>
       <div id="map"></div>
    	</main>
-   
 
     <script type='text/javascript' src='js/lib/jquery-3.2.1.min.js'></script>
     <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
