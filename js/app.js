@@ -1,27 +1,27 @@
 var WikiRestService = function(url){
 	this.url = url;
-}
+};
 
 WikiRestService.prototype.invoke = function(content, callbackSuccess, callBackError) {
 	$.ajax( {
-      url: this.url.replace('$value', content),
-      dataType: 'jsonp',
-      timeout: 5000,
-      success: function(response) {
-         callbackSuccess(response);
-      },
-      error: function(xhr, ajaxOptions, thrownError){
-      	 callBackError();
-      }
-    }
-  );
-}
+    	url: this.url.replace('$value', content),
+    	dataType: 'jsonp',
+		timeout: 5000,
+		success: function(response) {
+			callbackSuccess(response);
+		},
+		error: function(xhr, ajaxOptions, thrownError){
+			callBackError();
+		}
+    });
+};
 
 var map;
 var currentInfoWindow = null;
-var currentMarker = null
+var currentMarker = null;
 
-const errorMessage = 'Não foi possivel obter infomação! Possível problema de comunicação com o Wikipidia.';
+var ERROR_MESSAGE = 'Não foi possivel obter infomação no Wikipedia! Possível problema de comunicação.';
+var showErrorMessage = false;
 
 var modelLocations = [
 	{title: 'Theatro Municipal (São Paulo)', location: {lat: -23.545235, lng: -46.6386151}, visible:"true"},
@@ -41,11 +41,22 @@ modelLocations.forEach(function(value){
 
 var wikiRestService = new WikiRestService('https://en.wikipedia.org/w/api.php?action=opensearch&search=$value&format=json&callback=wikiCallback');
 
+function googleError(){
+	alert('Não foi possível carregar o Mapa do Google');
+}
+
 function initMap() {
-   map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: -23.5479528, lng: -46.6430906},
-      zoom: 16
-    });
+	map = new google.maps.Map(document.getElementById('map'), {
+    	center: {lat: -23.5479528, lng: -46.6430906},
+    	zoom: 16
+	});
+
+   var error = function(){
+        if(!showErrorMessage){
+        	alert(ERROR_MESSAGE);
+        	showErrorMessage = true;
+        }
+   	};
 
    for (var i = 0; i < modelLocations.length; i++) {
         var position = modelLocations[i].location;
@@ -63,21 +74,20 @@ function initMap() {
         currentInfoWindow = infoWindow;
         currentMarker = marker;
 
-        infoWindow.setContent('<div>' + marker.title + '</div>');
-
         //preenche a informacao do WIKI
-        //obs: foi dito para não usar KnockoutJS para eventos da api do google, por isso que fiz uso do jquery para preencher os dados quando o marker e' clicado.
-        var wiki = function(response){
-        	$('#currentLocation').text(response[2]);
-        }
+        var wiki = function(info){
+        	return function(response){
+        		info.setContent('<div>' + response[2] + '</div>');
+        	};
+        }(infoWindow);
+
+        
+
+        wikiRestService.invoke(title, wiki, error);
 
 		marker.addListener('click', showInfoWindowAndMarker(title));
-		marker.addListener('click', function(title, wiki){
-			return function(){
-				wikiRestService.invoke(title, wiki, function(){$('#currentLocation').text(errorMessage);});
-			}
-		}(title, wiki));
-
+		
+		modelLocations[i].marker = marker;
 		mapList[title].marker = marker;
 		mapList[title].infoWindow = infoWindow;
       }
@@ -89,22 +99,22 @@ var showInfoWindowAndMarker = function(title){
 		var clickedMarker = mapList[title].marker;
 		var infoWindow = mapList[title].infoWindow;
 		if(currentMarker != clickedMarker){
-				currentMarker.setAnimation(null);
+			currentMarker.setAnimation(null);
 				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
-				currentMarker = clickedMarker;
-			}else{
-				if(clickedMarker.getAnimation() == null){
-					clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
-				}
-				else{
-					clickedMarker.setAnimation(null);
-				}
+			currentMarker = clickedMarker;
+		}else{
+			if(clickedMarker.getAnimation() === null){
+				clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
 			}
-			currentInfoWindow.close();
-			infoWindow.open(map, clickedMarker);
-			currentInfoWindow = infoWindow;
-	}
-}
+			else{
+				clickedMarker.setAnimation(null);
+			}
+		}
+		currentInfoWindow.close();
+		infoWindow.open(map, clickedMarker);
+		currentInfoWindow = infoWindow;
+	};
+};
 
 var LocationModel = function(title, location, visible){
 	var self = this;
@@ -113,22 +123,15 @@ var LocationModel = function(title, location, visible){
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
 	self.show = showInfoWindowAndMarker(title);	
-}
+
+};
 
 var ViewModel = function(modelLocations){
 	self = this;
 
 	this.filter = ko.observable();
 	this.markersList = ko.observableArray();
-	this.currentWikiList = ko.observable();
-
-	//atualiza wikipedia info qd clicado
-	this.setCurrent = function(location){
-		var wiki = function(response){
-        		self.currentWikiList(response[2]);
-        	}
-		wikiRestService.invoke(location.title(), wiki, function(){self.currentWikiList(errorMessage)});
-	}
+	this.isOpen = ko.observable(false);
 
 	for (var i = 0; i < modelLocations.length; i++) {
 		this.markersList.push(new LocationModel(modelLocations[i].title, modelLocations[i].location, modelLocations[i].visible));
@@ -150,8 +153,12 @@ var ViewModel = function(modelLocations){
 		}
 
 		return true;
-	}
+	};
+
+	this.toggle = function(){
+		self.isOpen(!this.isOpen());
+	};
 	
-}
+};
 
 ko.applyBindings(new ViewModel(modelLocations));

@@ -1,58 +1,114 @@
-<!-- This is the corresponding "starter code" for 04_Hello Map in Udacity and Google's Maps
-API Course, Lesson 1 -->
+<!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
- <head>
- <!-- styles put here, but you can include a CSS file and reference it instead! -->
-   <style type="text/css">
-     body {
-     	box-sizing: border-box;
-     	display: flex;
-     	margin-right: 1%;
-     	margin-left: 1%;
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Locais de São Paulo</title>
+    <style type="text/css">
+      html { 
+        height: 100%;
+      }
+      body {
+        box-sizing: border-box;
+        height: 100%;
+      }
+      header{
+        display: block;
+      }
+      a#menu svg {
+        width: 30px;
+        fill: #000;
+      }
+      #map {
+        position: relative;
+        display: flex;
+        height: 90%;
+        overflow: hidden;
+      }
+      main{
+       	width: 100%;
+        height: 100%;
+      }
+      .list{
+        display: block;
+        list-style-type: none;
         padding: 0;
-     }
-     #map {
-     	height: 100%;
-     	width: 75%;
-     }
-     .main{
-     	height: 100%;
-     	width: 25%;
-     	margin-right: 1%;
-     }
-     .list{
-		display: block;
- 		list-style-type: none;
- 		padding: 0;
+      }
+      .list li{
+  		  padding: 1%;
+      }
+      nav {
+        height: 100%;
+        position: absolute;
+        z-index: 100;
+        background: #FFF;
+        -webkit-transform: translate(-300px, 0);
+        transform: translate(-300px, 0);
 
-     }
-     .list li{
-		padding: 1%;
-     }
-   </style>
- </head>
- <body>
- 	<div class="main">
- 		<div style="height:30%;">
-	 		<input style="width:100%;" type="text" name="" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
-	 		<ul class="list" data-bind="foreach: markersList">
-	 			<li data-bind="text: title, style:{display: visible}, click: function(){show(), $parent.setCurrent(this)}"></li>
-			</ul>
-		</div>
-		<hr>
-		<div style="height:70%;">
-    
-			<h3 style="text-align:center">Informação do Wikipedia</h3>
-			<p data-bind="text: currentWikiList" id="currentLocation"></p>
-			
-		</div>
- 	</div>
- 	<div id="map"></div>
+        transition: transform 0.3s ease;
+      }
+      nav.open {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
+      }
 
-   <script type='text/javascript' src='js/lib/jquery-3.2.1.min.js'></script>
-   <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
-   <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap"></script>
-   <script type="text/javascript" src="js/app.js"></script>
- </body>
+      @media (min-width: 600px) {
+
+        #map {
+          height: 100%;
+          margin-top: -1%;
+          margin-left: 1%;
+        }
+
+        header {
+          display: none;
+        }
+
+        nav {
+          width: 25%;
+          position:relative;
+          -webkit-transform: translate(0, 0);
+          transform: translate(0, 0);
+        }
+
+        body {
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+        }
+
+        main {
+          width: auto;
+          flex-grow: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+  <header style="width:100%;">
+    <a a href="#" id="menu" data-bind="click: toggle">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+      </svg>
+    </a>
+  </header>
+    <nav data-bind="css : {'open' : isOpen}">
+      <!-- <div style="height:30%;"> -->
+        <input style="width:90%;" type="text" name="Filter Location" placeholder="Digite um dos locais abaixo" data-bind="textInput: filter, valueUpdate: 'afterkeydown', event:{keyup: filterList}">
+        <ul class="list" data-bind="foreach: markersList">
+          <li data-bind="text: title, style:{display: visible}, click: function(){show(), $parent.toggle()}"></li>
+        </ul>
+      <!-- </div> -->
+      </nav>
+   	<main>
+      <div id="map"></div>
+   	</main>
+   
+
+    <script type='text/javascript' src='js/lib/jquery-3.2.1.min.js'></script>
+    <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX7LBObD50zQLrIA663u78NIxlYRWxe88&callback=initMap" onerror="googleError()"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+  </body>
 </html>
