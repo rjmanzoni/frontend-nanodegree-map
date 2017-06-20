@@ -51,13 +51,6 @@ function initMap() {
     	zoom: 16
 	});
 
-   var error = function(){
-        if(!showErrorMessage){
-        	alert(ERROR_MESSAGE);
-        	showErrorMessage = true;
-        }
-   	};
-
    for (var i = 0; i < modelLocations.length; i++) {
         var position = modelLocations[i].location;
         var title = modelLocations[i].title;
@@ -75,20 +68,25 @@ function initMap() {
         currentMarker = marker;
 
         //preenche a informacao do WIKI
-        var wiki = function(info){
+        var wiki = function(info, errorMessage){
         	return function(response){
-        		info.setContent('<div>' + response[2] + '</div>');
+			if(errorMessage === undefined){
+        			info.setContent('<div>' + response[2] + '</div>');
+			}
+			else{
+				info.setContent('<div>' + errorMessage + '</div>');
+			}
         	};
-        }(infoWindow);
+        };
 
-        wikiRestService.invoke(title, wiki, error);
+        wikiRestService.invoke(title, wiki(infoWindow), wiki(infoWindow, ERROR_MESSAGE));
 
-		marker.addListener('click', showInfoWindowAndMarker(title));
-		
-		modelLocations[i].marker = marker;
-		mapList[title].marker = marker;
-		mapList[title].infoWindow = infoWindow;
-      }
+	marker.addListener('click', showInfoWindowAndMarker(title));
+
+	modelLocations[i].marker = marker;
+	mapList[title].marker = marker;
+	mapList[title].infoWindow = infoWindow;
+    }
 }
 
 //funcao que mostra animacao qd e' clicado na lista ou no marker
@@ -120,7 +118,7 @@ var LocationModel = function(title, location, visible){
 	self.title = ko.observable(title);
 	self.location = ko.observable(location);
 	self.visible = ko.observable(visible);
-	self.show = showInfoWindowAndMarker(title);	
+	self.show = showInfoWindowAndMarker(title);
 
 };
 
@@ -160,7 +158,7 @@ var ViewModel = function(modelLocations){
 	this.close = function(){
 		self.isOpen(false);
 	};
-	
+
 };
 
 ko.applyBindings(new ViewModel(modelLocations));
